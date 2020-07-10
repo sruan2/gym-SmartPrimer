@@ -15,14 +15,18 @@ reward = 0
 done = False
 
 for i in range(episode_count):
-	#get the new children
-	ob = env.reset()
-	while True:
-		action = agent.act(ob, reward, done)
-		ob, reward, done, Baseinfo = env.step(action)
-		if done:
-			agent.reset()
-			break
+    #get the new children
+    ob = env.reset()
+    while True:
+        action = agent.act(ob, reward, done)
+        ob, reward, done, Baseinfo = env.step(action)
+        if (i%100==0):
+            print(ob)
+            print(reward)
+            print(done)
+        if done:
+            agent.reset()
+            break
 
 #make the plots
 env.render()
