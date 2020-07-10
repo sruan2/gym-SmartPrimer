@@ -1,3 +1,10 @@
+# Sherry's notes
+To run
+
+`python -m gym_SmartPrimer.examples.exampleBaseline`
+
+`python -m gym_SmartPrimer.examples.examplePPO`
+
 # Smartprimer simulation environment
 
 This repository contains an OpenAI gym environment for simulating high school children that try to solve a problem and
