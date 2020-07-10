@@ -14,7 +14,7 @@ import json
 np.random.seed(2)
 
 #configure the agent settings in this file
-agent_config_path = 'ppoSmartPrimer_config.json'
+agent_config_path = 'gym_SmartPrimer/agents/ppoSmartPrimer_config.json'
 with open(agent_config_path, 'rt') as fp:
 	agent_config = json.load(fp)
 
