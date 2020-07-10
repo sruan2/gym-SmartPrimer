@@ -1,5 +1,11 @@
 # Sherry's notes
-To run
+Pacakage version:
+
+`pip install tensorflow==1.15`
+
+`pip install tensorflow_probability==0.8`
+
+To run:
 
 `python -m gym_SmartPrimer.examples.exampleBaseline`
 
