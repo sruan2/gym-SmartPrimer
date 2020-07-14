@@ -32,7 +32,9 @@ class SmartPrimerDynamicEnv(gym.Env):
 
 		self.childrenSimulated = 0
 
-		# pre-test, grade, age, seconds of last interaction, seconds of last correct answer, [0,0,0] (positive, idk, negative) words since last action taken, stage of the problem, seconds since last interaction with wizard, anxiety
+		# pre-test, grade, age, seconds of last interaction, seconds of last correct answer,
+		# [0,0,0] (positive, idk, negative) words since last action taken, stage of the problem,
+		# seconds since last interaction with wizard, anxiety
 		low = np.array((0, 2, 5, 0, 0, 0, 0, 0, 0, 0, 0), dtype = float)
 		high = np.array((10, 6, 10, 1000, 1000, 1, 1, 1, 3, 1000, 45), dtype = float) #pre-test, 4 words dim, 3 prev-hints
 

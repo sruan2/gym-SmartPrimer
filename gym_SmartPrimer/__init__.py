@@ -21,3 +21,8 @@ register(
     id='SmartPrimer-realistic-v2',
     entry_point='gym_SmartPrimer.envs.V2:SmartPrimerDynamicEnv',
 )
+
+register(
+    id='SmartPrimer-realistic-v3',
+    entry_point='gym_SmartPrimer.envs.V2:SmartPrimerSherryEnv',
+)
