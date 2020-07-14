@@ -175,15 +175,24 @@ class SmartPrimerSherryEnv(gym.Env):
 		fig, axes = plt.subplots(nrows=1, ncols=nChildren)
 
 		i = 0
-		for ax in axes.flatten():
-			ax.set_title('Child type {}'.format(i+1))
-			ax.plot(self.info['actionInfo'][str(i)][0], 'y', label='Nothing')
-			ax.plot(self.info['actionInfo'][str(i)][1], 'g', label='Encourage')
-			ax.plot(self.info['actionInfo'][str(i)][2], 'r', label='Question')
-			ax.plot(self.info['actionInfo'][str(i)][3], 'b', label='Hint')
-			ax.set_ylabel('% of last 500 actions')
-			ax.legend()
-			i=+1
+		if nChildren != 1:
+			for ax in axes.flatten():
+				ax.set_title('Child type {}'.format(i+1))
+				ax.plot(self.info['actionInfo'][str(i)][0], 'y', label='Nothing')
+				ax.plot(self.info['actionInfo'][str(i)][1], 'g', label='Encourage')
+				ax.plot(self.info['actionInfo'][str(i)][2], 'r', label='Question')
+				ax.plot(self.info['actionInfo'][str(i)][3], 'b', label='Hint')
+				ax.set_ylabel('% of last 500 actions')
+				ax.legend()
+				i=+1
+		else:
+			axes.set_title('Child type {}'.format(i + 1))
+			axes.plot(self.info['actionInfo'][str(i)][0], 'y', label='Nothing')
+			axes.plot(self.info['actionInfo'][str(i)][1], 'g', label='Encourage')
+			axes.plot(self.info['actionInfo'][str(i)][2], 'r', label='Question')
+			axes.plot(self.info['actionInfo'][str(i)][3], 'b', label='Hint')
+			axes.set_ylabel('% of last 500 actions')
+			axes.legend()
 
 		plt.show()
 

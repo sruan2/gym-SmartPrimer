@@ -9,7 +9,7 @@ env = gym.make('gym_SmartPrimer:SmartPrimer-realistic-v3')
 agent = Baseline.BaselineAgent(env.action_space)
 
 #define number of children to simulate
-episode_count = 1000
+episode_count = 200
 
 reward = 0
 done = False
