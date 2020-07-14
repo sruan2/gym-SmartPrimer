@@ -15,7 +15,7 @@ class SmartPrimerSherryEnv(gym.Env):
 
 	def __init__(self):
 		'''Initializes the environment'''
-		with open(os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'childConfig.json'))) as config_file:
+		with open(os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'childConfigSherry.json'))) as config_file:
 			self.settings = json.load(config_file)
 
 		self.env = {}
@@ -32,17 +32,16 @@ class SmartPrimerSherryEnv(gym.Env):
 
 		self.childrenSimulated = 0
 
-		# pre-test, grade, age, seconds of last interaction, seconds of last correct answer,
-		# [0,0,0] (positive, idk, negative) words since last action taken, stage of the problem,
-		# seconds since last interaction with wizard, anxiety
-		low = np.array((0, 2, 5, 0, 0, 0, 0, 0, 0, 0, 0), dtype = float)
-		high = np.array((10, 6, 10, 1000, 1000, 1, 1, 1, 3, 1000, 45), dtype = float) #pre-test, 4 words dim, 3 prev-hints
+		# pre-test, grade,
+		# [0,0,0] (positive, idk, negative) words since last action taken, stage of the problem, anxiety
+		low = np.array((0, 2, 0, 0, 0, 0, 0), dtype = float)
+		high = np.array((10, 6, 1, 1, 1, 3, 45), dtype = float) #pre-test, 4 words dim, 3 prev-hints
 
 		self.observation_space = spaces.Box(low, high, dtype=np.float)
 
 		self.action_space = spaces.Discrete(4)  #do nothing, encourage, ask question or provide hints
 		self.actions = ['nothing', 'encourage', 'question', 'hint']
-		self.reward_range = (-2, 10)
+		self.reward_range = (-2, 8)
 
 		self.actionInfo = {'nothing': [], 'encourage': [], 'question': [], 'hint': []}
 		self.avgActionInfo = {'nothing': [], 'encourage': [], 'question': [], 'hint': []}
@@ -52,7 +51,11 @@ class SmartPrimerSherryEnv(gym.Env):
 			self.actionInfo[str(kid)] = [[], [], [], []]
 			self.avgActionInfo[str(kid)] = [[], [], [], []]
 
+		print(self.actionInfo)
+		print(self.avgActionInfo)
+
 		self.reset()
+
 
 	def step(self, action):
 		'''Takes an action and return the new statespace, reward, whether the episode has ended and some performance info'''
@@ -60,7 +63,7 @@ class SmartPrimerSherryEnv(gym.Env):
 
 		# the needed time for a child will decrease with one.
 		self.child.neededTime -= 1
-		action = self.actions[action]
+		action = self.actions[action]  # index to string
 		reward, done, info = ChildBehavior.react2action(action, self.child, self.stage, self.interactions)
 		self.childRewards += reward
 
@@ -92,8 +95,9 @@ class SmartPrimerSherryEnv(gym.Env):
 
 		return self.state, reward, done, self.info
 
+
 	def getInfo(self, actionTaken):
-		'''Retreives performance measures for plotting'''
+		'''Retrieves performance measures for plotting'''
 		kids = range(0, self.settings['nTypes'])
 		actions = [0, 1, 2, 3]
 
@@ -116,7 +120,8 @@ class SmartPrimerSherryEnv(gym.Env):
 			else:
 				self.actionInfo[self.actions[action]].append(0)
 
-			self.avgActionInfo[self.actions[action]].append(np.mean(self.actionInfo[self.actions[action]][-min(len(self.actionInfo[self.actions[action]]), 500):]))
+			self.avgActionInfo[self.actions[action]].append(np.mean(
+				self.actionInfo[self.actions[action]][-min(len(self.actionInfo[self.actions[action]]), 500):]))
 		return 0
 
 
@@ -126,15 +131,19 @@ class SmartPrimerSherryEnv(gym.Env):
 		if self.childrenSimulated % 50 == 0:
 			print('We simulated {} children'.format(self.childrenSimulated))
 
-		self.interactions = [0, 0, 0]
+		self.interactions = [0, 0, 0]  # get let interaction with screen, correct answer and with wizard
 		self.child = Child(self.settings)  # create a child of random type
 		self.childRewards = 0
 
 		prevAction = 'nothing'
 		self.stage = 0
 
-		self.state, self.interactions, self.stage = nextObs.nextObservation(self.child, self.interactions, prevAction, self.stage) #first 30 secs
+		self.state, self.interactions, self.stage = nextObs.nextObservation(self.child,
+		                                                                    self.interactions,
+		                                                                    prevAction,
+		                                                                    self.stage) #first 30 secs
 		return self.state
+
 
 	def render(self, mode='human'):
 		'''Creates plots of the results'''

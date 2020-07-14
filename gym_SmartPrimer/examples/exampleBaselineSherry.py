@@ -20,7 +20,7 @@ for i in range(episode_count):
     while True:
         action = agent.act(ob, reward, done)
         ob, reward, done, Baseinfo = env.step(action)
-        if (i%100==0):
+        if (i%500==0):
             print(ob)
             print(reward)
             print(done)
