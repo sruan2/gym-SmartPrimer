@@ -6,6 +6,7 @@ from rlgraph.agents import Agent
 from rlgraph.environments import OpenAIGymEnv
 from rlgraph.execution import SingleThreadedWorker
 import json
+import os
 
 np.random.seed(2)
 
@@ -31,7 +32,8 @@ for i in range(episode_count):
 
 np.random.seed(2)
 
-agent_config_path = 'ppoSmartPrimer_config.json' #configure the settings in this file
+agent_config_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/agents/ppoSmartPrimer_config.json'
+
 with open(agent_config_path, 'rt') as fp:
 	agent_config = json.load(fp)
 

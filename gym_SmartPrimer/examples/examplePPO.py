@@ -5,6 +5,7 @@ from rlgraph.agents import Agent
 from rlgraph.environments import OpenAIGymEnv
 from rlgraph.execution import SingleThreadedWorker
 import json
+import os
 
 ### NOTE ###
 #if you want to use PPO that never selects the same hint twice sequentially, use the ppo_agentSmartPrimer.py
@@ -14,7 +15,9 @@ import json
 np.random.seed(2)
 
 #configure the agent settings in this file
+
 agent_config_path = 'gym_SmartPrimer/agents/ppoSmartPrimer_config.json'
+
 with open(agent_config_path, 'rt') as fp:
 	agent_config = json.load(fp)
 

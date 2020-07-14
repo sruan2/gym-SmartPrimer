@@ -26,3 +26,8 @@ register(
     id='SmartPrimer-realistic-v3',
     entry_point='gym_SmartPrimer.envs.V2:SmartPrimerSherryEnv',
 )
+
+register(
+    id='SmartPrimer-knownPersonas-v2',
+    entry_point='gym_SmartPrimer.envs.V2:SmartPrimerKnownEnv',
+)

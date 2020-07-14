@@ -1,2 +1,3 @@
 from gym_SmartPrimer.envs.V2.Realistic.SmartPrimerDynamic_env import SmartPrimerDynamicEnv
 from gym_SmartPrimer.envs.V2.Realistic.SmartPrimerSherry_env import SmartPrimerSherryEnv
+from gym_SmartPrimer.envs.V2.knownPersonas.SmartPrimerKnown_env import SmartPrimerKnownEnv
