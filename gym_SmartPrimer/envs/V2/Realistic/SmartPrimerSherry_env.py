@@ -1,10 +1,10 @@
 import gym
 from gym import spaces
-from gym_SmartPrimer.envs.V2.Realistic.Childclass  import Child
+from gym_SmartPrimer.envs.V2.Realistic.ChildclassSherry  import Child
 import numpy as np
-from gym_SmartPrimer.envs.V2.Realistic import ChildBehavior as ChildBehavior
+from gym_SmartPrimer.envs.V2.Realistic import ChildBehaviorSherry as ChildBehavior
 import matplotlib.pyplot as plt
-from gym_SmartPrimer.envs.V2.Realistic import NextObservation as nextObs
+from gym_SmartPrimer.envs.V2.Realistic import NextObservationSherry as nextObs
 import json
 import os
 
@@ -64,12 +64,11 @@ class SmartPrimerSherryEnv(gym.Env):
 		# the needed time for a child will decrease with one.
 		self.child.neededTime -= 1
 		action = self.actions[action]  # index to string
-		reward, done, info = ChildBehavior.react2action(action, self.child, self.stage, self.interactions)
+		reward, done, info = ChildBehavior.react2action(action, self.child, self.stage)
 		self.childRewards += reward
 
 		if not done:
-			self.state, self.interactions, self.stage = nextObs.nextObservation(self.child, self.interactions, action,
-			                                                                    self.stage)  # first 30 secs
+			self.state, self.stage = nextObs.nextObservation(self.child, action, self.stage)  # first 30 secs
 
 		if done:
 			self.RewardsPerChild.append(self.childRewards)
@@ -131,17 +130,13 @@ class SmartPrimerSherryEnv(gym.Env):
 		if self.childrenSimulated % 50 == 0:
 			print('We simulated {} children'.format(self.childrenSimulated))
 
-		self.interactions = [0, 0, 0]  # get let interaction with screen, correct answer and with wizard
 		self.child = Child(self.settings)  # create a child of random type
 		self.childRewards = 0
 
 		prevAction = 'nothing'
 		self.stage = 0
 
-		self.state, self.interactions, self.stage = nextObs.nextObservation(self.child,
-		                                                                    self.interactions,
-		                                                                    prevAction,
-		                                                                    self.stage) #first 30 secs
+		self.state, self.stage = nextObs.nextObservation(self.child, prevAction, self.stage) # first 30 secs
 		return self.state
 
 
