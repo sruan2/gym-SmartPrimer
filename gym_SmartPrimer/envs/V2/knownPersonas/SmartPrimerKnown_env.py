@@ -33,8 +33,8 @@ class SmartPrimerKnownEnv(gym.Env):
 		self.childrenSimulated = 0
 
 		# persona, seconds of last interaction, seconds of last correct answer, [0,0,0] (positive, idk, negative) words since last action taken, stage of the problem, seconds since last interaction with wizard
-		low = np.array((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), dtype = float)
-		high = np.array((1, 1, 1, 1, 1000, 1000, 1, 1, 1, 3, 1000), dtype = float)
+		low = np.array((0, 0, 0, 0, 0, 0, 0, 0), dtype = float)
+		high = np.array((1, 1, 1, 1, 1, 1, 1, 3), dtype = float)
 
 		self.observation_space = spaces.Box(low, high, dtype=np.float)
 
@@ -164,15 +164,24 @@ class SmartPrimerKnownEnv(gym.Env):
 		fig, axes = plt.subplots(nrows=1, ncols=nChildren)
 
 		i = 0
-		for ax in axes.flatten():
-			ax.set_title('Child type {}'.format(i+1))
-			ax.plot(self.info['actionInfo'][str(i)][0], 'y', label='Nothing')
-			ax.plot(self.info['actionInfo'][str(i)][1], 'g', label='Encourage')
-			ax.plot(self.info['actionInfo'][str(i)][2], 'r', label='Question')
-			ax.plot(self.info['actionInfo'][str(i)][3], 'b', label='Hint')
-			ax.set_ylabel('% of last 500 actions')
-			ax.legend()
-			i=+1
+		if nChildren != 1:
+			for ax in axes.flatten():
+				ax.set_title('Child type {}'.format(i + 1))
+				ax.plot(self.info['actionInfo'][str(i)][0], 'y', label='Nothing')
+				ax.plot(self.info['actionInfo'][str(i)][1], 'g', label='Encourage')
+				ax.plot(self.info['actionInfo'][str(i)][2], 'r', label='Question')
+				ax.plot(self.info['actionInfo'][str(i)][3], 'b', label='Hint')
+				ax.set_ylabel('% of last 500 actions')
+				ax.legend()
+				i = +1
+		else:
+			axes.set_title('Child type {}'.format(i + 1))
+			axes.plot(self.info['actionInfo'][str(i)][0], 'y', label='Nothing')
+			axes.plot(self.info['actionInfo'][str(i)][1], 'g', label='Encourage')
+			axes.plot(self.info['actionInfo'][str(i)][2], 'r', label='Question')
+			axes.plot(self.info['actionInfo'][str(i)][3], 'b', label='Hint')
+			axes.set_ylabel('% of last 500 actions')
+			axes.legend()
 
 		plt.show()
 

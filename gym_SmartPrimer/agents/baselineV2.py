@@ -9,5 +9,8 @@ class BaselineAgent(object):
     def act(self, observation, reward, done):
         return np.random.randint(0, 4)
 
+    def act2(self, observation, reward, done):
+        return 3
+
     def reset(self):
         pass

@@ -18,7 +18,7 @@ for i in range(episode_count):
     #get the new children
     ob = env.reset()
     while True:
-        action = agent.act(ob, reward, done)
+        action = agent.act2(ob, reward, done)
         ob, reward, done, Baseinfo = env.step(action)
         # if (i%500==0):
         #     print(ob)

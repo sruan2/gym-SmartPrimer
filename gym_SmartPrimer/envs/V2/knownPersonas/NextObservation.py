@@ -123,6 +123,6 @@ def nextObservation(child, interactions, prevAction, stage):
 	persona[child.type] = 1
 
 	#collect in the right format
-	nextObs = np.array(persona + [secLastScreen, secLastCor] + words + [stage, secLastWiz], dtype = np.float)
+	nextObs = np.array(persona + words + [stage], dtype = np.float)
 	return nextObs, interactions, stage
 

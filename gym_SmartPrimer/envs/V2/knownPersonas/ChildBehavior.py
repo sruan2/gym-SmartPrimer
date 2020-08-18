@@ -9,6 +9,7 @@ def react2action(action, child, stage, interactions):
 	#initialize
 	done = False
 	info = {}
+	reward = 0
 
 	with open(os.path.abspath(os.path.join(os.path.dirname(__file__), 'childConfig.json'))) as config_file:
 		settings = json.load(config_file)
@@ -23,6 +24,7 @@ def react2action(action, child, stage, interactions):
 		child.nEncouragements += 1
 		child.encouragementsNeeded -= 1
 		if child.neededHints <= 0 and child.encouragementsNeeded <= 0 and child.neededTime == np.inf:
+			reward = 0.01
 			child.neededTime = max(settings['meanNeededTimeAfterHints'][child.type] + round(np.random.normal(0, 1)), 0)
 
 	# if the action is hint, we decrease the number of hints needed by 1. If this makes it 0 and
@@ -30,6 +32,7 @@ def react2action(action, child, stage, interactions):
 	elif action == 'hint':
 		child.neededHints -= 1
 		if child.neededHints <= 0 and child.encouragementsNeeded <= 0 and child.neededTime == np.inf:
+			reward = 0.01
 			child.neededTime = max(settings['meanNeededTimeAfterHints'][child.type] + round(np.random.normal(0, 1)), 0)
 		elif child.neededHints < 0:
 			child.nWrongHints += 1
@@ -40,9 +43,11 @@ def react2action(action, child, stage, interactions):
 	#if we encouraged, the probability is 0 for the first 3 encouragements
 	if action == 'encourage' and child.nEncouragements <= 3:
 		quitProb = 0
+		reward = 0.01
 
 	if action == 'hint' and child.neededHints > 0:
 		quitProb -= 0.05
+		reward = 0.01
 
 	#clip the probability to make between 0 and 1
 	quitProb = min(1, max(0, quitProb))
@@ -60,13 +65,12 @@ def react2action(action, child, stage, interactions):
 		info['reaction'] = 'quit'
 		return reward, True, info
 
-	reward = 0
 	return reward, done, info
 
 
 def makePostTest(child):
 	'''A function that takes as input the child and returns its post-test score - pre-test'''
-	potential = 10 - child.preScore
+	potential = 8 - child.preScore
 	multiplier = min(1, max(0, 0.5 - child.nWrongHints * 0.1 + child.nQuestions * 0.07 + child.nEncouragements * 0.03))
 
 	postImp = multiplier * potential
