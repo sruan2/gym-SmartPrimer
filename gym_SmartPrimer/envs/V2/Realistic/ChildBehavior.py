@@ -36,7 +36,7 @@ def react2action(action, child, stage, interactions):
 			child.neededTime = max(settings['meanNeededTimeAfterHints'][child.type] + round(np.random.normal(0, 1)), 0)
 		elif child.neededHints < 0:
 			child.nWrongHints += 1
-			#reward -= 0.5
+			reward -= 0.5
 
 	#define the quitting probability
 	# quitProb = max(0, interactions[1] - 120) * 0.0002 + child.nWrongAnswers * 0.01
