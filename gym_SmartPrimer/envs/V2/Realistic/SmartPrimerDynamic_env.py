@@ -22,7 +22,9 @@ class SmartPrimerDynamicEnv(gym.Env):
 		self.info = {}
 
 		self.RewardsPerChild = []
+		self.ImprovementPerChild = []
 		self.performance = []
+		self.improvement = []
 
 		self.nFinish = []
 		self.avgFinish = []
@@ -72,9 +74,12 @@ class SmartPrimerDynamicEnv(gym.Env):
 			                                                                    self.stage)  # first 30 secs
 
 		if done:
+			self.ImprovementPerChild.append(reward)
 			self.RewardsPerChild.append(self.childRewards)
 			performance = self.RewardsPerChild[-min(len(self.RewardsPerChild), 50):]
 			self.performance.append(np.mean(performance))
+			improvement = self.ImprovementPerChild[-min(len(self.ImprovementPerChild), 50):]
+			self.improvement.append(np.mean(improvement))
 
 			nQuit, nFinish = 0, 0
 			if info['reaction'] == 'quit':
@@ -90,7 +95,8 @@ class SmartPrimerDynamicEnv(gym.Env):
 			avgFinish = np.mean(self.nFinish[-min(len(self.nFinish), 100):])
 			self.avgFinish.append(avgFinish)
 
-		self.info = {'RewardsPerChild': self.RewardsPerChild, 'Performance': self.performance, 'nFinish': self.avgFinish,
+		self.info = {'RewardsPerChild': self.RewardsPerChild, 'Performance': self.performance,
+		             'Improvement': self.improvement,  'nFinish': self.avgFinish,
 		             'nQuit': self.avgQuit, 'actionInfo': self.avgActionInfo}
 
 		return self.state, reward, done, self.info
@@ -141,14 +147,18 @@ class SmartPrimerDynamicEnv(gym.Env):
 
 	def render(self, mode='human'):
 		'''Creates plots of the results'''
-		ax1 = plt.subplot(311)
+		ax1 = plt.subplot(411)
 		# ax1.set_title('Scenario 4: average reward of last 100 children without quitting penalty')
 		ax1.margins(0.05)
 		# ax1.set_xlabel('Number of children')
 		ax1.set_title('Average reward of last 50 children')
 		ax1.plot(self.info['Performance'], 'r')
 
-		ax4 = plt.subplot(312)
+		ax5 = plt.subplot(412)
+		ax5.set_title('Average improvement of last 50 children')
+		ax5.plot(self.info['Improvement'], 'r')
+
+		ax4 = plt.subplot(413)
 		ax4.set_title('Actions taken')
 		ax4.plot(self.info['actionInfo']['question'], 'r', label='Question')
 		ax4.plot(self.info['actionInfo']['encourage'], 'g', label='Encourage')
@@ -157,7 +167,7 @@ class SmartPrimerDynamicEnv(gym.Env):
 		ax4.set_ylabel('% of last 500 actions')
 		ax4.legend()
 
-		ax2 = plt.subplot(313)
+		ax2 = plt.subplot(414)
 		ax2.plot(self.info['nQuit'], 'r', label='Quit')
 		ax2.plot(self.info['nFinish'], 'g', label='Finished')
 		ax2.set_ylabel('% of last 100 children')
