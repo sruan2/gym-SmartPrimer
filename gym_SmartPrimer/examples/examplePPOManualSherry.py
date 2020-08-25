@@ -78,7 +78,7 @@ for i in range(episode_count):
 
 # print(env.gym_env.info['Performance'])                       
 #make the plots
-# env.render()
+env.render()
 
 performance = env.gym_env.info['Performance']
 improvement = env.gym_env.info['Improvement']

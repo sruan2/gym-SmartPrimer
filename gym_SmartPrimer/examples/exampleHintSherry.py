@@ -42,7 +42,7 @@ for i in range(episode_count):
             break
 
 #make the plots
-# env.render()
+env.render()
 performance = env.info['Performance']
 improvement = env.info['Improvement']
                        
