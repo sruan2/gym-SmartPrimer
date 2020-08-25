@@ -5,8 +5,20 @@ from rlgraph.agents import Agent
 from rlgraph.environments import OpenAIGymEnv
 import json
 import os
+import pickle
+import argparse
 
-np.random.seed(2)
+
+
+
+
+parser = argparse.ArgumentParser(description='example')
+parser.add_argument('--seed', type=int, default=0,
+                    help='numpy seed ')
+parser.add_argument('--time', type=int, default=1,
+                    help='numpy seed ')
+args = parser.parse_args()
+np.random.seed(args.seed)
 
 #create the environment
 env = OpenAIGymEnv.from_spec({
@@ -64,6 +76,17 @@ for i in range(episode_count):
 						agent.reset()
 						break
 
+# print(env.gym_env.info['Performance'])                       
 #make the plots
-env.render()
+# env.render()
+
+performance = env.gym_env.info['Performance']
+improvement = env.gym_env.info['Improvement']
+                       
+# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_ppo_pen_'+str(args.seed)+'.pickle'
+# with open(pickle_name , 'wb') as handle:
+#     pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
+# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_ppo_pen_'+str(args.seed)+'.pickle'
+# with open(pickle_name , 'wb') as handle:
+#     pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

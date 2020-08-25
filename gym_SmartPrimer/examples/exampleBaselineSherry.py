@@ -1,8 +1,20 @@
 import gym
 import numpy as np
 import gym_SmartPrimer.agents.baselineV2 as Baseline
+import pickle
+import argparse
 
-np.random.seed(2)
+
+
+
+
+parser = argparse.ArgumentParser(description='example')
+parser.add_argument('--seed', type=int, default=0,
+                    help='numpy seed ')
+parser.add_argument('--time', type=int, default=1,
+                    help='numpy seed ')
+args = parser.parse_args()
+np.random.seed(args.seed)
 
 #create the environment
 env = gym.make('gym_SmartPrimer:SmartPrimer-realistic-v2')
@@ -28,6 +40,18 @@ for i in range(episode_count):
             agent.reset()
             break
 
+
+
+
+    
 #make the plots
 env.render()
-
+performance = env.info['Performance']
+improvement = env.info['Improvement']
+                       
+# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_baseline_pen_'+str(args.seed)+'.pickle'
+# with open(pickle_name , 'wb') as handle:
+#     pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
+# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_baseline_pen_'+str(args.seed)+'.pickle'
+# with open(pickle_name , 'wb') as handle:
+#     pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
