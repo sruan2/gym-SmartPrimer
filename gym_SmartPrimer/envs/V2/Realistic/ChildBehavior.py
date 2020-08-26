@@ -36,7 +36,7 @@ def react2action(action, child, stage, interactions):
 			child.neededTime = max(settings['meanNeededTimeAfterHints'][child.type] + round(np.random.normal(0, 1)), 0)
 		elif child.neededHints < 0:
 			child.nWrongHints += 1
-			reward -= 0.5
+			#reward -= 0.5
 
 	#define the quitting probability
 	# quitProb = max(0, interactions[1] - 120) * 0.0002 + child.nWrongAnswers * 0.01
@@ -74,10 +74,10 @@ def react2action(action, child, stage, interactions):
 def makePostTest(child):
 	'''A function that takes as input the child and returns its post-test score - pre-test'''
 	potential = 8 - child.preScore
-	multiplier = min(1, max(0, 0.5 - child.nWrongHints * 0.1 + child.nQuestions * 0.07 + child.nEncouragements * 0.03))
+	#multiplier = min(1, max(0, 0.5 - child.nWrongHints * 0.1 + child.nQuestions * 0.07 + child.nEncouragements * 0.03))
 
 
-	multiplier = min(1, max(0, 0.5 - child.nWrongHints * 0.01 + child.nQuestions * 0.007 + child.nEncouragements * 0.003))
+	multiplier = min(1, max(0, 2 - child.nWrongHints * 0.01 + child.nQuestions * 0.007 + child.nEncouragements * 0.003))
 
 	postImp = multiplier * potential
 	return postImp
