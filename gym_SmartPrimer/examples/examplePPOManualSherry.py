@@ -48,10 +48,12 @@ done = False
 for i in range(episode_count):
 		#get the new children
 		ob = env.reset()
+		action_list = []
 
 		while True:
 				time_percentage = min(agent.timesteps / 1e6, 1.0)
 				action = agent.get_action(ob, time_percentage=time_percentage)
+				action_list.append(action)
 				#print(time_percentage)
 				next_ob, reward, done, Baseinfo = env.step(action)
 				# print(ob)
@@ -71,6 +73,10 @@ for i in range(episode_count):
 						# 	print(ob)
 						# 	print(reward)
 						# 	print(done)
+
+						print("Student", i, "actions")
+						print(action_list)
+
 						if i % 10 == 0:
 							agent.update(time_percentage=time_percentage)
 						agent.reset()
