@@ -37,6 +37,8 @@ def react2action(action, child, stage, interactions):
 		elif child.neededHints < 0:
 			child.nWrongHints += 1
 			#reward -= 0.5
+		child.nHints += 1
+		reward = 0.1
 
 	#define the quitting probability
 	# quitProb = max(0, interactions[1] - 120) * 0.0002 + child.nWrongAnswers * 0.01
@@ -56,7 +58,8 @@ def react2action(action, child, stage, interactions):
 
 	# we are at the last question and the child does not need any more time (e.g. the child finishes)
 	if stage == 3 and child.neededTime <= 0:
-		reward = makePostTest(child)
+		#reward = makePostTest(child)
+		reward = makePostTest(child) - 0.1 * (1 + child.psi) * child.nHints
 		info['reaction'] = 'finished'
 		return reward, True, info
 
