@@ -59,19 +59,21 @@ def react2action(action, child, stage, interactions):
 	# we are at the last question and the child does not need any more time (e.g. the child finishes)
 	if stage == 3 and child.neededTime <= 0:
 		#reward = makePostTest(child)
+		improvement = makePostTest(child)
 		reward = makePostTest(child) - 0.1 * (1 + child.psi) * child.nHints
 		info['reaction'] = 'finished'
-		return reward, True, info
+		return improvement, reward, True, info
 
 	#if the child quits
 	if np.random.binomial(1, quitProb) == 1:
+		improvement = -8
 		postResult = makePostTest(child)
 		reward = -8
 		info['reaction'] = 'quit'
-		return reward, True, info
+		return improvement, reward, True, info
 
-
-	return reward, done, info
+	improvement = makePostTest(child)
+	return improvement, reward, done, info
 
 
 def makePostTest(child):

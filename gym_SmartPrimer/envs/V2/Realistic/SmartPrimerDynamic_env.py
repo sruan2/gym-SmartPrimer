@@ -66,7 +66,7 @@ class SmartPrimerDynamicEnv(gym.Env):
 		# the needed time for a child will decrease with one.
 		self.child.neededTime -= 1
 		action = self.actions[action]
-		reward, done, info = ChildBehavior.react2action(action, self.child, self.stage, self.interactions)
+		improvement, reward, done, info = ChildBehavior.react2action(action, self.child, self.stage, self.interactions)
 		self.childRewards += reward
 
 		if not done:
@@ -74,7 +74,7 @@ class SmartPrimerDynamicEnv(gym.Env):
 			                                                                    self.stage)  # first 30 secs
 
 		if done:
-			self.ImprovementPerChild.append(reward)
+			self.ImprovementPerChild.append(improvement)
 			self.RewardsPerChild.append(self.childRewards)
 			performance = self.RewardsPerChild[-min(len(self.RewardsPerChild), 50):]
 			self.performance.append(np.mean(performance))
