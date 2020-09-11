@@ -89,10 +89,15 @@ env.render()
 performance = env.gym_env.info['Performance']
 improvement = env.gym_env.info['Improvement']
                        
-# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_ppo_pen_'+str(args.seed)+'.pickle'
-# with open(pickle_name , 'wb') as handle:
-#     pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
-# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_ppo_pen_'+str(args.seed)+'.pickle'
-# with open(pickle_name , 'wb') as handle:
-#     pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
+pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_ppo_psi03_'+str(args.seed)+'.pickle'
+with open(pickle_name , 'wb') as handle:
+    pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
+pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_ppo_psi03_'+str(args.seed)+'.pickle'
+with open(pickle_name , 'wb') as handle:
+    pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+actionInfo = env.gym_env.info['actionInfo']    
+pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/actionInfo_ppo_psi03_'+str(args.seed)+'.pickle'
+with open(pickle_name , 'wb') as handle:
+    pickle.dump(actionInfo, handle, protocol=pickle.HIGHEST_PROTOCOL) 
+    

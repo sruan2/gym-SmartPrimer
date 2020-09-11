@@ -42,15 +42,18 @@ for i in range(episode_count):
             break
 
 #make the plots
-env.render()
+# env.render()
 performance = env.info['Performance']
 improvement = env.info['Improvement']
                        
-# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_alwayshint_pen_'+str(args.seed)+'.pickle'
-# with open(pickle_name , 'wb') as handle:
-#     pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
-# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_alwayshint_pen_'+str(args.seed)+'.pickle'
-# with open(pickle_name , 'wb') as handle:
-#     pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
+pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_alwayshint_'+str(args.seed)+'.pickle'
+with open(pickle_name , 'wb') as handle:
+    pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
+pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_alwayshint_'+str(args.seed)+'.pickle'
+with open(pickle_name , 'wb') as handle:
+    pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-
+actionInfo = env.info['actionInfo']    
+pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/actionInfo_alwayshint_'+str(args.seed)+'.pickle'
+with open(pickle_name , 'wb') as handle:
+    pickle.dump(actionInfo, handle, protocol=pickle.HIGHEST_PROTOCOL) 
