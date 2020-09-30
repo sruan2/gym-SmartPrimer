@@ -7,10 +7,8 @@ def react2action(action, child, stage, interactions):
 	the corresponding reward, whether the child is completely done and some information statistics'''
 
 	#initialize
-	done = False
 	info = {}
 	reward = 0
-
 	with open(os.path.abspath(os.path.join(os.path.dirname(__file__), 'childConfig.json'))) as config_file:
 		settings = json.load(config_file)
 
@@ -24,7 +22,6 @@ def react2action(action, child, stage, interactions):
 		child.nEncouragements += 1
 		child.encouragementsNeeded -= 1
 		if child.neededHints <= 0 and child.encouragementsNeeded <= 0 and child.neededTime == np.inf:
-			reward = 0.01
 			child.neededTime = max(settings['meanNeededTimeAfterHints'][child.type] + round(np.random.normal(0, 1)), 0)
 
 	# if the action is hint, we decrease the number of hints needed by 1. If this makes it 0 and
@@ -32,13 +29,10 @@ def react2action(action, child, stage, interactions):
 	elif action == 'hint':
 		child.neededHints -= 1
 		if child.neededHints <= 0 and child.encouragementsNeeded <= 0 and child.neededTime == np.inf:
-			reward = 0.01
 			child.neededTime = max(settings['meanNeededTimeAfterHints'][child.type] + round(np.random.normal(0, 1)), 0)
 		elif child.neededHints < 0:
 			child.nWrongHints += 1
-			#reward -= 0.5
 		child.nHints += 1
-		reward = 0.1
 
 	#define the quitting probability
 	# quitProb = max(0, interactions[1] - 120) * 0.0002 + child.nWrongAnswers * 0.01
@@ -46,11 +40,11 @@ def react2action(action, child, stage, interactions):
 
 	#if we encouraged, the probability is 0 for the first 3 encouragements
 	if action == 'encourage' and child.nEncouragements <= 3:
-		reward = 0.01
+		reward = 2
 		quitProb -= 0.05
 
 	if action == 'hint' and child.neededHints > 0:
-		reward = 0.01
+		reward = 2
 		quitProb -= 0.05
 
 	#clip the probability to make between 0 and 1
@@ -58,22 +52,27 @@ def react2action(action, child, stage, interactions):
 
 	# we are at the last question and the child does not need any more time (e.g. the child finishes)
 	if stage == 3 and child.neededTime <= 0:
-		#reward = makePostTest(child)
 		improvement = makePostTest(child)
-		reward = makePostTest(child) - 0.1 * (1 + child.psi) * child.nHints
+		reward = 1 + max(0, improvement) - (1 + child.psi) * (child.nHints + child.nEncouragements + child.nQuestions)
+
 		info['reaction'] = 'finished'
 		return improvement, reward, True, info
 
 	#if the child quits
 	if np.random.binomial(1, quitProb) == 1:
-		improvement = -8
-		postResult = makePostTest(child)
-		reward = -8
+		improvement = - 8
+		# postResult = makePostTest(child)
+		reward = - 8 - (1 + child.psi) * (child.nHints + child.nEncouragements + child.nQuestions)
 		info['reaction'] = 'quit'
 		return improvement, reward, True, info
 
+	if reward != 2:
+		reward = 1
+	if action == 'nothing':
+		reward = 0
+
 	improvement = makePostTest(child)
-	return improvement, reward, done, info
+	return improvement, reward, False, info
 
 
 def makePostTest(child):
@@ -81,8 +80,7 @@ def makePostTest(child):
 	potential = 8 - child.preScore
 	#multiplier = min(1, max(0, 0.5 - child.nWrongHints * 0.1 + child.nQuestions * 0.07 + child.nEncouragements * 0.03))
 
-
-	multiplier = min(1, max(0, 2 - child.nWrongHints * 0.01 + child.nQuestions * 0.007 + child.nEncouragements * 0.003))
+	multiplier = min(1, max(0, 1 - child.nWrongHints * 0.01 + child.nQuestions * 0.007 + child.nEncouragements * 0.003 - child.nWrongAnswers * 0.01))
 
 	postImp = multiplier * potential
 	return postImp

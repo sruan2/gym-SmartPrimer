@@ -15,8 +15,8 @@ import os
 np.random.seed(2)
 
 #configure the agent settings in this file
-
-agent_config_path = 'gym_SmartPrimer/agents/ppoSmartPrimer_config.json'
+agent_config_path = '/Users/williamsteenbergen/PycharmProjects/SmartPrimerFall/gym_SmartPrimer/agents/ppoSmartPrimer_config.json'
+#agent_config_path = 'gym_SmartPrimer/agents/ppoSmartPrimer_config.json'
 
 with open(agent_config_path, 'rt') as fp:
 	agent_config = json.load(fp)
@@ -35,7 +35,7 @@ agent = Agent.from_spec(
     )
 
 #define number of children to simulate
-episode_count = 1000
+episode_count = 500
 
 episode_returns = []
 def episode_finished_callback(episode_return, duration, timesteps, *args, **kwargs):

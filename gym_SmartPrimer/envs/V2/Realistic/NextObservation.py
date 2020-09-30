@@ -121,7 +121,7 @@ def nextObservation(child, interactions, prevAction, stage):
 
 	#collect in the right format
 	# nextObs = np.array([child.preScore, child.grade, child.age, secLastScreen, secLastCor] + words + [stage, secLastWiz, child.anxiety], dtype = np.float)
-	nextObs = np.array([child.preScore, child.grade] + words + [stage, child.anxiety], dtype=np.float)
+	nextObs = np.array([child.preScore, child.grade] + words + [stage, child.anxiety, child.nWrongAnswers], dtype=np.float)
 
 	return nextObs, interactions, stage
 

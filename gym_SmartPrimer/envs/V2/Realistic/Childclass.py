@@ -44,7 +44,7 @@ class Child:
 		self.nWrongHints = 0
 		self.nQuestions = 0
 		self.nEncouragements = 0
-		self.nWrongAnswers = 0
 		self.nHints = 0
 		self.psi = 0.3
+		self.nWrongAnswers = 0
 

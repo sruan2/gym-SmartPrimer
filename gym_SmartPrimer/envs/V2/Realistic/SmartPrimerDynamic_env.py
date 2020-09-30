@@ -40,8 +40,8 @@ class SmartPrimerDynamicEnv(gym.Env):
 		# low = np.array((0, 2, 5, 0, 0, 0, 0, 0, 0, 0, 0), dtype = float)
 		# high = np.array((8, 6, 10, 1000, 1000, 1, 1, 1, 3, 1000, 45), dtype = float) #pre-test, 4 words dim, 3 prev-hints
 
-		low = np.array((0, 2, 0, 0, 0, 0, 0), dtype=float)
-		high = np.array((8, 6, 1, 1, 1, 3, 45), dtype=float)  # pre-test, 4 words dim, 3 prev-hints
+		low = np.array((0, 2, 0, 0, 0, 0, 0, 0), dtype=float)
+		high = np.array((8, 6, 1, 1, 1, 3, 45, 10), dtype=float)  # pre-test, grade, 4 words dim, stage, anxiety ,number of wrong answers
 
 		self.observation_space = spaces.Box(low, high, dtype=np.float)
 
@@ -88,11 +88,11 @@ class SmartPrimerDynamicEnv(gym.Env):
 				nFinish = 1
 
 			self.Nquit.append(nQuit)
-			avgQuit = np.mean(self.Nquit[-min(len(self.Nquit), 100):])
+			avgQuit = np.mean(self.Nquit[-min(len(self.Nquit), 50):])
 			self.avgQuit.append(avgQuit)
 
 			self.nFinish.append(nFinish)
-			avgFinish = np.mean(self.nFinish[-min(len(self.nFinish), 100):])
+			avgFinish = np.mean(self.nFinish[-min(len(self.nFinish), 50):])
 			self.avgFinish.append(avgFinish)
 
 		self.info = {'RewardsPerChild': self.RewardsPerChild, 'Performance': self.performance,
