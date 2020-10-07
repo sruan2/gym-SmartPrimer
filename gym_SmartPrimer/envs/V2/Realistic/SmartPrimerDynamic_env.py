@@ -78,8 +78,8 @@ class SmartPrimerDynamicEnv(gym.Env):
 			self.RewardsPerChild.append(self.childRewards)
 			performance = self.RewardsPerChild[-min(len(self.RewardsPerChild), 50):]
 			self.performance.append(np.mean(performance))
-			improvement = self.ImprovementPerChild[-min(len(self.ImprovementPerChild), 50):]
-			self.improvement.append(np.mean(improvement))
+			improvementSum = self.ImprovementPerChild[-min(len(self.ImprovementPerChild), 50):]
+			self.improvement.append(np.mean(improvementSum))
 
 			nQuit, nFinish = 0, 0
 			if info['reaction'] == 'quit':
@@ -97,7 +97,7 @@ class SmartPrimerDynamicEnv(gym.Env):
 
 		self.info = {'RewardsPerChild': self.RewardsPerChild, 'Performance': self.performance,
 		             'Improvement': self.improvement,  'nFinish': self.avgFinish,
-		             'nQuit': self.avgQuit, 'actionInfo': self.avgActionInfo}
+		             'nQuit': self.avgQuit, 'actionInfo': self.avgActionInfo, 'improvementPerChild': improvement}
 
 		return self.state, reward, done, self.info
 

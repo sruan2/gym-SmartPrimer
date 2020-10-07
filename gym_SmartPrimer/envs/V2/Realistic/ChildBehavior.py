@@ -8,7 +8,7 @@ def react2action(action, child, stage, interactions):
 
 	#initialize
 	info = {}
-	reward = 0
+	reward = 1
 	with open(os.path.abspath(os.path.join(os.path.dirname(__file__), 'childConfig.json'))) as config_file:
 		settings = json.load(config_file)
 
@@ -40,11 +40,12 @@ def react2action(action, child, stage, interactions):
 
 	#if we encouraged, the probability is 0 for the first 3 encouragements
 	if action == 'encourage' and child.nEncouragements <= 3:
-		reward = 2
+		reward = 1.5
 		quitProb -= 0.05
 
 	if action == 'hint' and child.neededHints > 0:
-		reward = 2
+		child.nCorrectHints += 1
+		reward = 1.5
 		quitProb -= 0.05
 
 	#clip the probability to make between 0 and 1
@@ -60,14 +61,14 @@ def react2action(action, child, stage, interactions):
 
 	#if the child quits
 	if np.random.binomial(1, quitProb) == 1:
-		improvement = - 8
+		improvement = 0
 		# postResult = makePostTest(child)
 		reward = - 8 - (1 + child.psi) * (child.nHints + child.nEncouragements + child.nQuestions)
 		info['reaction'] = 'quit'
 		return improvement, reward, True, info
 
-	if reward != 2:
-		reward = 1
+	# if reward != 2:
+	# 	reward = 1
 	if action == 'nothing':
 		reward = 0
 
@@ -80,7 +81,8 @@ def makePostTest(child):
 	potential = 8 - child.preScore
 	#multiplier = min(1, max(0, 0.5 - child.nWrongHints * 0.1 + child.nQuestions * 0.07 + child.nEncouragements * 0.03))
 
-	multiplier = min(1, max(0, 1 - child.nWrongHints * 0.01 + child.nQuestions * 0.007 + child.nEncouragements * 0.003 - child.nWrongAnswers * 0.01))
+	nCorrectHints = min(child.nCorrectHints, 4)
+	multiplier = min(1, max(0, 0.7 - child.nWrongHints * 0.03 + child.nQuestions * 0.01 + child.nEncouragements * 0.008 - child.nWrongAnswers * 0.02 + nCorrectHints * 0.02))
 
 	postImp = multiplier * potential
 	return postImp

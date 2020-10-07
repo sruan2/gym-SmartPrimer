@@ -47,4 +47,5 @@ class Child:
 		self.nHints = 0
 		self.psi = 0.3
 		self.nWrongAnswers = 0
+		self.nCorrectHints = 0
 
