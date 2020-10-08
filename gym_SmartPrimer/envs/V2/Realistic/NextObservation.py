@@ -95,7 +95,7 @@ def nextObservation(child, interactions, prevAction, stage):
 				secLastScreen = secLastWiz
 
 		#if the child was not able to finish the sub-problem, but attempted a wrong answer
-		screenIntProbs = np.array(info['probWrongAnswer']) + interactions[0]*0.0005 #prob depends on how long he/she hasn't interacted with screen
+		screenIntProbs = np.array(info['probWrongAnswer']) + interactions[0] * 0.0005  #prob depends on how long he/she hasn't interacted with screen
 
 		#if the child used the screen in the last 30 secs
 		if np.random.binomial(1, screenIntProbs[child.type]) == 1:

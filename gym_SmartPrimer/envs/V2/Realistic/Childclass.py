@@ -20,24 +20,26 @@ class Child:
 	  """
 	def __init__(self, info):
 
+		stochastics = 0
+
 		type = np.random.randint(0, info['nTypes'])
 
 		self.type = type #0 = smart, 1 = outgoing, 2 = quiet, 3 = anxious
 
-		self.age = info['meanAge'][type] + round(np.random.normal(0, 1))
+		self.age = info['meanAge'][type] + round(np.random.normal(0, 1)) * stochastics
 
-		self.grade = info['meanGrade'][type] + round(np.random.normal(0, 0.5))
+		self.grade = info['meanGrade'][type] + round(np.random.normal(0, 0.5))* stochastics
 
-		self.preScore = min(max(info['meanPreScore'][type] + np.random.randint(-2, 2), 0), 10)
+		self.preScore = min(max(info['meanPreScore'][type] + np.random.randint(-2, 2) * stochastics, 0) , 10)
 
-		self.neededHints = min(max(info['meanNeededHints'][type] + round(np.random.normal(0, 0.5)), 0), 4)
+		self.neededHints = min(max(info['meanNeededHints'][type] + round(np.random.normal(0, 0.5) * stochastics), 0), 4)
 
-		self.anxiety = info['meanAnxietyScore'][type] + round(np.random.normal(0, 2))
+		self.anxiety = info['meanAnxietyScore'][type] + round(np.random.normal(0, 2))* stochastics
 
-		self.encouragementsNeeded = max(0, info['meanNeededEncouragements'][type] + round(np.random.normal(0, 0.3)))
+		self.encouragementsNeeded = max(0, info['meanNeededEncouragements'][type] + round(np.random.normal(0, 0.3)* stochastics))
 
 		if self.neededHints == 0 and self.encouragementsNeeded == 0:
-			self.neededTime = max(info['meanNeededTimeAfterHints'][type] + round(np.random.normal(0, 1)), 0)
+			self.neededTime = max(info['meanNeededTimeAfterHints'][type] + round(np.random.normal(0, 1)* stochastics), 0)
 		else:
 			self.neededTime = np.inf
 
@@ -48,4 +50,11 @@ class Child:
 		self.psi = 0.3
 		self.nWrongAnswers = 0
 		self.nCorrectHints = 0
+
+
+		randomInitTest = False
+		if randomInitTest:
+			self.preScore = np.random.randint(0, 9)
+			self.grade = np.random.randint(2, 7)
+			self.anxiety = np.random.randint(0, 46)
 

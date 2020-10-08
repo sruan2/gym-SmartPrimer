@@ -35,7 +35,7 @@ agent = Agent.from_spec(
     )
 
 #define number of children to simulate
-episode_count = 500
+episode_count = 3000
 
 episode_returns = []
 def episode_finished_callback(episode_return, duration, timesteps, *args, **kwargs):

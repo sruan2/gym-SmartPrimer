@@ -46,10 +46,10 @@ class SmartPrimerDynamicEnv(gym.Env):
 		self.observation_space = spaces.Box(low, high, dtype=np.float)
 
 		self.action_space = spaces.Discrete(4)  #do nothing, encourage, ask question or provide hints
-		self.actions = ['nothing', 'encourage', 'question', 'hint']
+		self.actions = ['hint', 'encourage', 'question',  'nothing']
 		self.reward_range = (-8, 9)
 
-		self.actionInfo = {'nothing': [], 'encourage': [], 'question': [], 'hint': []}
+		self.actionInfo = {'hint': [], 'encourage': [], 'question': [],  'nothing': []}
 		self.avgActionInfo = {'nothing': [], 'encourage': [], 'question': [], 'hint': []}
 
 		kids = range(0, self.settings['nTypes'])
@@ -74,11 +74,16 @@ class SmartPrimerDynamicEnv(gym.Env):
 			                                                                    self.stage)  # first 30 secs
 
 		if done:
+			# print('This is the kids improvement: {}'.format(improvement))
+
 			self.ImprovementPerChild.append(improvement)
 			self.RewardsPerChild.append(self.childRewards)
-			performance = self.RewardsPerChild[-min(len(self.RewardsPerChild), 50):]
+			performance = self.RewardsPerChild[-min(len(self.RewardsPerChild)-1, 100):]
 			self.performance.append(np.mean(performance))
-			improvementSum = self.ImprovementPerChild[-min(len(self.ImprovementPerChild), 50):]
+
+			improvementSum = self.ImprovementPerChild[-min(len(self.ImprovementPerChild), 100):]
+			# print('ImprovementSum: {}'.format(improvementSum))
+
 			self.improvement.append(np.mean(improvementSum))
 
 			nQuit, nFinish = 0, 0
@@ -88,12 +93,14 @@ class SmartPrimerDynamicEnv(gym.Env):
 				nFinish = 1
 
 			self.Nquit.append(nQuit)
-			avgQuit = np.mean(self.Nquit[-min(len(self.Nquit), 50):])
+			avgQuit = np.mean(self.Nquit[-min(len(self.Nquit)-1, 100):])
 			self.avgQuit.append(avgQuit)
 
 			self.nFinish.append(nFinish)
-			avgFinish = np.mean(self.nFinish[-min(len(self.nFinish), 50):])
+			avgFinish = np.mean(self.nFinish[-min(len(self.nFinish)-1, 100):])
 			self.avgFinish.append(avgFinish)
+
+			# print('This is the average improvement seen so far: {}'.format(self.improvement))
 
 		self.info = {'RewardsPerChild': self.RewardsPerChild, 'Performance': self.performance,
 		             'Improvement': self.improvement,  'nFinish': self.avgFinish,

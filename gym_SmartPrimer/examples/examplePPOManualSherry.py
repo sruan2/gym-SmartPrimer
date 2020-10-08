@@ -39,7 +39,7 @@ agent = Agent.from_spec(
 		)
 
 #define number of children to simulate
-episode_count = 500
+episode_count = 10000
 
 reward = 0
 done = False
@@ -57,8 +57,9 @@ def evaluate(agent_obs, nChildren):
 
 		while True:
 			time_percentage_obs = min(agent_obs.timesteps / 1e6, 1.0)
-			# action = agent_obs.get_action(ob_obs, time_percentage=time_percentage_obs)
-			action = np.random.randint(0, 4)
+			action = agent_obs.get_action(ob_obs, time_percentage=time_percentage_obs)
+			# action = np.random.randint(0, 4)
+			# action = 3
 
 			action_list_obs.append(action)
 			# print(time_percentage)
@@ -69,6 +70,10 @@ def evaluate(agent_obs, nChildren):
 			# print(action)
 			agent_obs.observe(ob_obs, action, None, reward, next_ob_obs, done)
 			ob_obs = next_ob_obs
+
+			# DONT FORGET TO DELETE THIS
+			ob_obs = [np.random.randint(0, 9), np.random.randint(2, 7), np.random.randint(0, 2), np.random.randint(0, 2),
+			      np.random.randint(0, 2), np.random.randint(0, 4), np.random.randint(0, 46), np.random.randint(0, 11)]
 
 			# if agent.timesteps % 200 == 0:
 			# 	agent.update(time_percentage=time_percentage)
@@ -88,7 +93,16 @@ def evaluate(agent_obs, nChildren):
 				agent_obs.reset()
 				break
 	# print('Improvements were: {}'.format(improvements))
-	return np.mean(improvements)
+	return np.mean(improvements), np.std(improvements), envObs.gym_env.info['actionInfo']
+
+
+agent_obs = copy.copy(agent)
+evaluation_improvement, evaluation_stds, actionInfo = evaluate(agent_obs, 500)
+print('encourage: {}'.format(actionInfo['encourage'][-20:]))
+print('question: {}'.format(actionInfo['question'][-20:]))
+print('hint: {}'.format(actionInfo['hint'][-20:]))
+print('nothing: {}'.format(actionInfo['nothing'][-20:]))
+a=1
 
 
 evaluation_improvements = []
@@ -110,6 +124,9 @@ for i in range(episode_count):
 				agent.observe(ob, action, None, reward, next_ob, done)
 				ob = next_ob
 
+
+
+
 				# if agent.timesteps % 200 == 0:
 				# 	agent.update(time_percentage=time_percentage)
 
@@ -124,33 +141,51 @@ for i in range(episode_count):
 						# print("Student", i, "actions")
 						# print(action_list)
 
+
+						if i % 1 ==0:
+							agent_obs = copy.copy(agent)
+							evaluation_improvement, evaluation_stds, actionInfo = evaluate(agent_obs, 500)
+							print('encourage: {}'.format(actionInfo['encourage'][-20:]))
+							print('question: {}'.format(actionInfo['question'][-20:]))
+							print('hint: {}'.format(actionInfo['hint'][-20:]))
+							print('nothing: {}'.format(actionInfo['nothing'][-20:]))
+							a=1
+
+
 						if i % 10 == 0:
 							agent.update(time_percentage=time_percentage)
 
-							if i % 20 == 0:
+							if i % 50 == 0:
 								agent_obs = copy.copy(agent) #copy the policy
-								evaluation_improvement = evaluate(agent_obs, 500)
+								evaluation_improvement, evaluation_stds = evaluate(agent_obs, 500)
+
+								print(evaluation_improvement)
+								print(evaluation_stds)
 								evaluation_improvements.append(evaluation_improvement)
 
+							# if i % 2000 == 0:
+							# 	plt.plot(evaluation_improvements)
+							# 	plt.title('Improvement per agent update, averaged over 100 evaluation children')
+							# 	plt.xlabel('Number of children trained x20')
+							# 	plt.ylabel('Average improvement of 100 evaluation children')
+							# 	plt.show()
 							# print('Evaluation improvements are: {}'.format(evaluation_improvements))
 
 						agent.reset()
 						break
 
-# print(env.gym_env.info['Improvement'])
+print(env.gym_env.info['Improvement'])
 
-print(evaluation_improvements)
-plt.plot(evaluation_improvements)
-plt.title('Improvement per agent update, averaged over 100 evaluation children')
-plt.xlabel('Number of children trained x20')
-plt.ylabel('Average improvement of 100 evaluation children')
-plt.show()
+# print(evaluation_improvements)
+# plt.plot(evaluation_improvements)
+# plt.title('Improvement per agent update, averaged over 100 evaluation children')
+# plt.xlabel('Number of children trained x20')
+# plt.ylabel('Average improvement of 100 evaluation children')
+# plt.show()
 
 # print(env.gym_env.info['Performance'])                       
 #make the plots
-# env.render()
-
-
+env.render()
 
 
 
