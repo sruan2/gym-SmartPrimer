@@ -20,7 +20,7 @@ class Child:
 	  """
 	def __init__(self, info):
 
-		stochastics = 0
+		stochastics = 1
 
 		type = np.random.randint(0, info['nTypes'])
 
@@ -51,10 +51,4 @@ class Child:
 		self.nWrongAnswers = 0
 		self.nCorrectHints = 0
 
-
-		randomInitTest = False
-		if randomInitTest:
-			self.preScore = np.random.randint(0, 9)
-			self.grade = np.random.randint(2, 7)
-			self.anxiety = np.random.randint(0, 46)
 

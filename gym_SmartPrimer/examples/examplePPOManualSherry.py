@@ -12,11 +12,12 @@ import matplotlib.pyplot as plt
 
 
 parser = argparse.ArgumentParser(description='example')
-parser.add_argument('--seed', type=int, default=0,
+parser.add_argument('--seed', type=int, default=2,
                     help='numpy seed ')
 parser.add_argument('--time', type=int, default=1,
                     help='numpy seed ')
 args = parser.parse_args()
+
 np.random.seed(args.seed)
 
 #create the environment
@@ -24,6 +25,10 @@ env = OpenAIGymEnv.from_spec({
 				"type": "openai",
 				"gym_env": 'gym_SmartPrimer:SmartPrimer-realistic-v2'
 		})
+
+
+
+
 
 #configure the agent settings in this file
 agent_config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),  'agents/ppoSmartPrimer_config.json')
@@ -39,7 +44,7 @@ agent = Agent.from_spec(
 		)
 
 #define number of children to simulate
-episode_count = 10000
+episode_count = 500
 
 reward = 0
 done = False
@@ -53,6 +58,7 @@ def evaluate(agent_obs, nChildren):
 	improvements = []
 	for i in range(0, nChildren):
 		ob_obs = envObs.reset()
+		ob_obs = (ob_obs - [4, 4, 0.5, 0.5, 0.5, 1.5, 15, 5]) / [8, 4, 1, 1, 1, 3, 30, 10]
 		action_list_obs = []
 
 		while True:
@@ -62,70 +68,40 @@ def evaluate(agent_obs, nChildren):
 			# action = 3
 
 			action_list_obs.append(action)
-			# print(time_percentage)
+
 			next_ob_obs, reward, done, Baseinfo = envObs.step(action)
-			# print(ob)
-			# print(reward)
-			# print(done)
-			# print(action)
-			agent_obs.observe(ob_obs, action, None, reward, next_ob_obs, done)
+			next_ob_obs = (next_ob_obs - [4, 4, 0.5, 0.5, 0.5, 1.5, 15, 5]) / [8, 4, 1, 1, 1, 3, 30, 10]
+
+			# agent_obs.observe(ob_obs, action, None, reward, next_ob_obs, done)
 			ob_obs = next_ob_obs
 
-			# DONT FORGET TO DELETE THIS
-			ob_obs = [np.random.randint(0, 9), np.random.randint(2, 7), np.random.randint(0, 2), np.random.randint(0, 2),
-			      np.random.randint(0, 2), np.random.randint(0, 4), np.random.randint(0, 46), np.random.randint(0, 11)]
-
-			# if agent.timesteps % 200 == 0:
-			# 	agent.update(time_percentage=time_percentage)
-
-			# agent.update(time_percentage=time_percentage)
-
 			if done:
-				# if (i%50==0):
-				# 	print(ob)
-				# 	print(reward)
-				# 	print(done)
-
-				# print("Student", i, "actions")
-				# print(action_list)
 				improvements.append(envObs.gym_env.info['improvementPerChild'])
 
 				agent_obs.reset()
 				break
-	# print('Improvements were: {}'.format(improvements))
-	return np.mean(improvements), np.std(improvements), envObs.gym_env.info['actionInfo']
 
-
-agent_obs = copy.copy(agent)
-evaluation_improvement, evaluation_stds, actionInfo = evaluate(agent_obs, 500)
-print('encourage: {}'.format(actionInfo['encourage'][-20:]))
-print('question: {}'.format(actionInfo['question'][-20:]))
-print('hint: {}'.format(actionInfo['hint'][-20:]))
-print('nothing: {}'.format(actionInfo['nothing'][-20:]))
-a=1
-
+	return np.mean(improvements), np.std(improvements)
 
 evaluation_improvements = []
 for i in range(episode_count):
 		#get the new children
 		ob = env.reset()
-		action_list = []
+		ob = (ob - [4, 4, 0.5, 0.5, 0.5, 1.5, 15, 5]) / [8, 4, 1, 1, 1, 3, 30, 10]
 
 		while True:
 				time_percentage = min(agent.timesteps / 1e6, 1.0)
 				action = agent.get_action(ob, time_percentage=time_percentage)
-				action_list.append(action)
-				#print(time_percentage)
+
+
 				next_ob, reward, done, Baseinfo = env.step(action)
-				# print(ob)
-				# print(reward)
-				# print(done)
-				# print(action)
+				next_ob = (next_ob - [4, 4, 0.5, 0.5, 0.5, 1.5, 15, 5]) / [8, 4, 1, 1, 1, 3, 30, 10]
+
+				# print('observation: {}'.format(next_ob))
+				# print('reward: {}'.format(reward))
+
 				agent.observe(ob, action, None, reward, next_ob, done)
 				ob = next_ob
-
-
-
 
 				# if agent.timesteps % 200 == 0:
 				# 	agent.update(time_percentage=time_percentage)
@@ -133,58 +109,33 @@ for i in range(episode_count):
 				# agent.update(time_percentage=time_percentage)
 				# print('agent timesteps: {}'.format(agent.timesteps))
 				if done:
-						# if (i%50==0):
-						# 	print(ob)
-						# 	print(reward)
-						# 	print(done)
-
-						# print("Student", i, "actions")
-						# print(action_list)
-
-
-						if i % 1 ==0:
-							agent_obs = copy.copy(agent)
-							evaluation_improvement, evaluation_stds, actionInfo = evaluate(agent_obs, 500)
-							print('encourage: {}'.format(actionInfo['encourage'][-20:]))
-							print('question: {}'.format(actionInfo['question'][-20:]))
-							print('hint: {}'.format(actionInfo['hint'][-20:]))
-							print('nothing: {}'.format(actionInfo['nothing'][-20:]))
-							a=1
-
-
+						# print('Child is done')
 						if i % 10 == 0:
 							agent.update(time_percentage=time_percentage)
 
-							if i % 50 == 0:
-								agent_obs = copy.copy(agent) #copy the policy
-								evaluation_improvement, evaluation_stds = evaluate(agent_obs, 500)
+							# if i % 20 == 0:
+							# 	agent_obs = copy.copy(agent) #copy the policy
+							# 	evaluation_improvement, evaluation_stds = evaluate(agent_obs, 500)
+							# 	print(evaluation_improvement)
+							# 	print(evaluation_stds)
+							#
+							# 	evaluation_improvements.append(evaluation_improvement)
 
-								print(evaluation_improvement)
-								print(evaluation_stds)
-								evaluation_improvements.append(evaluation_improvement)
-
-							# if i % 2000 == 0:
-							# 	plt.plot(evaluation_improvements)
-							# 	plt.title('Improvement per agent update, averaged over 100 evaluation children')
-							# 	plt.xlabel('Number of children trained x20')
-							# 	plt.ylabel('Average improvement of 100 evaluation children')
-							# 	plt.show()
-							# print('Evaluation improvements are: {}'.format(evaluation_improvements))
 
 						agent.reset()
 						break
 
-print(env.gym_env.info['Improvement'])
+# print(env.gym_env.info['Improvement'])
+#
+print(evaluation_improvements)
+plt.plot(evaluation_improvements)
+plt.title('Improvement per agent update, averaged over 500 evaluation children')
+plt.xlabel('Number of children trained x20')
+plt.ylabel('Average improvement of 500 evaluation children')
+plt.show()
 
-# print(evaluation_improvements)
-# plt.plot(evaluation_improvements)
-# plt.title('Improvement per agent update, averaged over 100 evaluation children')
-# plt.xlabel('Number of children trained x20')
-# plt.ylabel('Average improvement of 100 evaluation children')
-# plt.show()
-
-# print(env.gym_env.info['Performance'])                       
-#make the plots
+print(env.gym_env.info['Performance'])
+# make the plots
 env.render()
 
 
@@ -192,15 +143,15 @@ env.render()
 performance = env.gym_env.info['Performance']
 improvement = env.gym_env.info['Improvement']
                        
-pickle_name = '/Users/williamsteenbergen/Desktop/Smart_Primer/pickles2/per_ppo_psi03_'+str(args.seed)+'.pickle'
+pickle_name = '/Users/williamsteenbergen/Desktop/Smart_Primer/easy_PPO/per_ppo_psi03_'+str(args.seed)+'.pickle'
 with open(pickle_name , 'wb') as handle:
     pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
-pickle_name = '/Users/williamsteenbergen/Desktop/Smart_Primer/pickles2/imp_ppo_psi03_'+str(args.seed)+'.pickle'
+pickle_name = '/Users/williamsteenbergen/Desktop/Smart_Primer/easy_PPO/imp_ppo_psi03_'+str(args.seed)+'.pickle'
 with open(pickle_name , 'wb') as handle:
     pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 actionInfo = env.gym_env.info['actionInfo']    
-pickle_name = '/Users/williamsteenbergen/Desktop/Smart_Primer/pickles2/actionInfo_ppo_psi03_'+str(args.seed)+'.pickle'
+pickle_name = '/Users/williamsteenbergen/Desktop/Smart_Primer/easy_PPO/actionInfo_ppo_psi03_'+str(args.seed)+'.pickle'
 with open(pickle_name , 'wb') as handle:
     pickle.dump(actionInfo, handle, protocol=pickle.HIGHEST_PROTOCOL) 
     

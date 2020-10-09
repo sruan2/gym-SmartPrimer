@@ -40,17 +40,20 @@ class SmartPrimerDynamicEnv(gym.Env):
 		# low = np.array((0, 2, 5, 0, 0, 0, 0, 0, 0, 0, 0), dtype = float)
 		# high = np.array((8, 6, 10, 1000, 1000, 1, 1, 1, 3, 1000, 45), dtype = float) #pre-test, 4 words dim, 3 prev-hints
 
-		low = np.array((0, 2, 0, 0, 0, 0, 0, 0), dtype=float)
-		high = np.array((8, 6, 1, 1, 1, 3, 45, 10), dtype=float)  # pre-test, grade, 4 words dim, stage, anxiety ,number of wrong answers
+		# low = np.array((0, 2, 0, 0, 0, 0, 0, 0), dtype=float)
+		# high = np.array((8, 6, 1, 1, 1, 3, 45, 10), dtype=float)  # pre-test, grade, 4 words dim, stage, anxiety ,number of wrong answers
+
+		low = np.array((-1, -1, -1, -1, -1, -1, -1, -1), dtype=float)
+		high = np.array((1, 1, 1, 1, 1, 1, 1, 1), dtype=float)
 
 		self.observation_space = spaces.Box(low, high, dtype=np.float)
 
 		self.action_space = spaces.Discrete(4)  #do nothing, encourage, ask question or provide hints
-		self.actions = ['hint', 'encourage', 'question',  'nothing']
+		self.actions = ['nothing', 'encourage', 'question',  'hint']
 		self.reward_range = (-8, 9)
 
-		self.actionInfo = {'hint': [], 'encourage': [], 'question': [],  'nothing': []}
-		self.avgActionInfo = {'nothing': [], 'encourage': [], 'question': [], 'hint': []}
+		self.actionInfo = {'encourage': [], 'question': [],  'nothing': [], 'hint': []}
+		self.avgActionInfo = {'encourage': [], 'question': [], 'nothing': [], 'hint': []}
 
 		kids = range(0, self.settings['nTypes'])
 		for kid in kids:
@@ -78,10 +81,10 @@ class SmartPrimerDynamicEnv(gym.Env):
 
 			self.ImprovementPerChild.append(improvement)
 			self.RewardsPerChild.append(self.childRewards)
-			performance = self.RewardsPerChild[-min(len(self.RewardsPerChild)-1, 100):]
+			performance = self.RewardsPerChild[-min(len(self.RewardsPerChild)-1, 50):]
 			self.performance.append(np.mean(performance))
 
-			improvementSum = self.ImprovementPerChild[-min(len(self.ImprovementPerChild), 100):]
+			improvementSum = self.ImprovementPerChild[-min(len(self.ImprovementPerChild), 50):]
 			# print('ImprovementSum: {}'.format(improvementSum))
 
 			self.improvement.append(np.mean(improvementSum))
@@ -93,11 +96,11 @@ class SmartPrimerDynamicEnv(gym.Env):
 				nFinish = 1
 
 			self.Nquit.append(nQuit)
-			avgQuit = np.mean(self.Nquit[-min(len(self.Nquit)-1, 100):])
+			avgQuit = np.mean(self.Nquit[-min(len(self.Nquit)-1, 50):])
 			self.avgQuit.append(avgQuit)
 
 			self.nFinish.append(nFinish)
-			avgFinish = np.mean(self.nFinish[-min(len(self.nFinish)-1, 100):])
+			avgFinish = np.mean(self.nFinish[-min(len(self.nFinish)-1, 50):])
 			self.avgFinish.append(avgFinish)
 
 			# print('This is the average improvement seen so far: {}'.format(self.improvement))

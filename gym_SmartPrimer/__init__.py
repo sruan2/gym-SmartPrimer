@@ -31,3 +31,8 @@ register(
     id='SmartPrimer-knownPersonas-v2',
     entry_point='gym_SmartPrimer.envs.V2:SmartPrimerKnownEnv',
 )
+
+register(
+    id='TestEnv-v0',
+    entry_point='gym_SmartPrimer.envs.V2:TestEnv',
+)
