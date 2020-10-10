@@ -39,23 +39,30 @@ agent = Agent.from_spec(
 				action_space=env.action_space
 		)
 
+w = agent.get_weights()
+
 #define number of children to simulate
 episode_count = 500
 
 reward = 0
 done = False
+int2action = ['nothing', 'encourage', 'probe', 'hint']
 
 for i in range(episode_count):
 		#get the new children
 		ob = env.reset()
+		ob = (ob - [4, 4, 0.5, 0.5, 0.5, 1.5, 22.5]) /  [8, 4, 1, 1, 1, 3, 45]
 		action_list = []
+		state_list = []
 
 		while True:
 				time_percentage = min(agent.timesteps / 1e6, 1.0)
 				action = agent.get_action(ob, time_percentage=time_percentage)
 				action_list.append(action)
+				state_list.append(ob)
 				#print(time_percentage)
 				next_ob, reward, done, Baseinfo = env.step(action)
+				next_ob = (next_ob - [4, 4, 0.5, 0.5, 0.5, 1.5, 22.5]) / [8, 4, 1, 1, 1, 3, 45]
 				# print(ob)
 				# print(reward)
 				# print(done)
@@ -73,31 +80,40 @@ for i in range(episode_count):
 						# 	print(ob)
 						# 	print(reward)
 						# 	print(done)
+						state_list.append(ob)
 
-						print("Student", i, "actions")
-						print(action_list)
+						print("\n\nStudent", i)
+						print("nothing:", action_list.count(0) / len(action_list))
+						print("encourage:", action_list.count(1) / len(action_list))
+						print("question:", action_list.count(2) / len(action_list))
+						print("hint:", action_list.count(3) / len(action_list))
+
+						#for i in range(len(action_list)):
+							#print(state_list[i])
+							#print(int2action[action_list[i]])
+						#print(state_list[-1])
 
 						if i % 10 == 0:
 							agent.update(time_percentage=time_percentage)
 						agent.reset()
 						break
 
-# print(env.gym_env.info['Performance'])                       
+# print(env.gym_env.info['Performance'])
 #make the plots
 env.render()
-
-performance = env.gym_env.info['Performance']
-improvement = env.gym_env.info['Improvement']
-                       
-pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_ppo_psi03_'+str(args.seed)+'.pickle'
-with open(pickle_name , 'wb') as handle:
-    pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)                       
-pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_ppo_psi03_'+str(args.seed)+'.pickle'
-with open(pickle_name , 'wb') as handle:
-    pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-actionInfo = env.gym_env.info['actionInfo']    
-pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/actionInfo_ppo_psi03_'+str(args.seed)+'.pickle'
-with open(pickle_name , 'wb') as handle:
-    pickle.dump(actionInfo, handle, protocol=pickle.HIGHEST_PROTOCOL) 
+#
+# performance = env.gym_env.info['Performance']
+# improvement = env.gym_env.info['Improvement']
+#
+# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/per_ppo_psi03_'+str(args.seed)+'.pickle'
+# with open(pickle_name , 'wb') as handle:
+#     pickle.dump(performance, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/imp_ppo_psi03_'+str(args.seed)+'.pickle'
+# with open(pickle_name , 'wb') as handle:
+#     pickle.dump(improvement, handle, protocol=pickle.HIGHEST_PROTOCOL)
+#
+# actionInfo = env.gym_env.info['actionInfo']
+# pickle_name = '/Users/jiequanzhang/Desktop/smart_primer/gym-SmartPrimer/pickles/actionInfo_ppo_psi03_'+str(args.seed)+'.pickle'
+# with open(pickle_name , 'wb') as handle:
+#     pickle.dump(actionInfo, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
