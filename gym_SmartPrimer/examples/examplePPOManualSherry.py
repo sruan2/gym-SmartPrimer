@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 
 
 parser = argparse.ArgumentParser(description='example')
-parser.add_argument('--seed', type=int, default=2,
+parser.add_argument('--seed', type=int, default=0,
                     help='numpy seed ')
-parser.add_argument('--time', type=int, default=1,
+parser.add_argument('--time', type=int, default=3,
                     help='numpy seed ')
 args = parser.parse_args()
 
@@ -72,7 +72,6 @@ def evaluate(agent_obs, nChildren):
 			next_ob_obs, reward, done, Baseinfo = envObs.step(action)
 			next_ob_obs = (next_ob_obs - [4, 4, 0.5, 0.5, 0.5, 1.5, 15, 5]) / [8, 4, 1, 1, 1, 3, 30, 10]
 
-			# agent_obs.observe(ob_obs, action, None, reward, next_ob_obs, done)
 			ob_obs = next_ob_obs
 
 			if done:
@@ -113,13 +112,13 @@ for i in range(episode_count):
 						if i % 10 == 0:
 							agent.update(time_percentage=time_percentage)
 
-							# if i % 20 == 0:
-							# 	agent_obs = copy.copy(agent) #copy the policy
-							# 	evaluation_improvement, evaluation_stds = evaluate(agent_obs, 500)
-							# 	print(evaluation_improvement)
-							# 	print(evaluation_stds)
-							#
-							# 	evaluation_improvements.append(evaluation_improvement)
+							if i % 50 == 0:
+								agent_obs = copy.copy(agent) #copy the policy
+								evaluation_improvement, evaluation_stds = evaluate(agent_obs, 500)
+								print(evaluation_improvement)
+								print(evaluation_stds)
+
+								evaluation_improvements.append(evaluation_improvement)
 
 
 						agent.reset()
@@ -127,11 +126,11 @@ for i in range(episode_count):
 
 # print(env.gym_env.info['Improvement'])
 #
-print(evaluation_improvements)
+# print(evaluation_improvements)
 plt.plot(evaluation_improvements)
-plt.title('Improvement per agent update, averaged over 500 evaluation children')
+plt.title('Improvement per agent update, averaged over 300 evaluation children')
 plt.xlabel('Number of children trained x20')
-plt.ylabel('Average improvement of 500 evaluation children')
+plt.ylabel('Average improvement of 300 evaluation children')
 plt.show()
 
 print(env.gym_env.info['Performance'])

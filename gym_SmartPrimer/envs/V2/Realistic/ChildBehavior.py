@@ -6,7 +6,7 @@ def react2action(action, child, stage, interactions):
 	'''Function that takes as input the action taken, the child object, problem stage and interactions, and returns
 	the corresponding reward, whether the child is completely done and some information statistics'''
 
-	pureImprovement = True
+	pureImprovement = False
 	perfectActions = False
 
 	if perfectActions:
@@ -20,7 +20,7 @@ def react2action(action, child, stage, interactions):
 
 	#initialize
 	info = {}
-	reward = 1
+	reward = 0
 
 	with open(os.path.abspath(os.path.join(os.path.dirname(__file__), 'childConfig.json'))) as config_file:
 		settings = json.load(config_file)
@@ -48,6 +48,7 @@ def react2action(action, child, stage, interactions):
 		elif child.neededHints < 0:
 			child.nWrongHints += 1
 		child.nHints += 1
+		reward = 0.01
 
 	#define the quitting probability
 	# quitProb = max(0, interactions[1] - 120) * 0.0002 + child.nWrongAnswers * 0.01
@@ -59,7 +60,7 @@ def react2action(action, child, stage, interactions):
 
 	if action == 'hint' and child.neededHints > 0:
 		child.nCorrectHints += 1
-		reward = 1
+		reward = 0.1
 		quitProb -= 0.05
 
 	#clip the probability to make between 0 and 1
@@ -68,7 +69,7 @@ def react2action(action, child, stage, interactions):
 	# we are at the last question and the child does not need any more time (e.g. the child finishes)
 	if stage == 3 and child.neededTime <= 0:
 		improvement = makePostTest(child)
-		reward = 1 + max(0, improvement) - (1 + child.psi) * (child.nHints + child.nEncouragements + child.nQuestions)
+		reward = max(0, improvement) - 0.01 * (1 + child.psi) * (child.nHints)
 
 		info['reaction'] = 'finished'
 
@@ -81,11 +82,11 @@ def react2action(action, child, stage, interactions):
 	if np.random.binomial(1, quitProb) == 1:
 		improvement = 0
 		# postResult = makePostTest(child)
-		reward = - 7 - (1 + child.psi) * (child.nHints + child.nEncouragements + child.nQuestions)
+		reward = - 8
 		info['reaction'] = 'quit'
 
 		if pureImprovement:
-			reward = -8
+			reward = - 8
 
 		return improvement, reward, True, info
 
@@ -113,7 +114,7 @@ def makePostTest(child):
 	# print('Number of correct hints: {}'.format(child.nCorrectHints))
 
 	nCorrectHints = min(child.nCorrectHints, 4)
-	multiplier = min(1, max(0, 0.7 - child.nWrongHints * 0.1 + child.nQuestions * 0.07 + child.nEncouragements * 0.05 - child.nWrongAnswers * 0.05 + nCorrectHints * 0.08))
+	multiplier = min(1, max(0, 0.7 - child.nWrongHints * 0.01 + child.nQuestions * 0.01 + child.nEncouragements * 0.005 - child.nWrongAnswers * 0.005 + nCorrectHints * 0.01))
 
 	# print('pre score: {}'.format(child.preScore))
 	# print('multiplier: {}'.format(multiplier))

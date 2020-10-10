@@ -60,6 +60,8 @@ def nextObservation(child, interactions, prevAction, stage):
 		#stage will go up
 		stage += 1
 
+		child.nWrongAnswersCurrent = 0
+
 		#reset the number of hints a child needs
 		child.neededHints = min(max(info['meanNeededHints'][child.type] + round(np.random.normal(0, 1)), 0), 4)
 
@@ -95,11 +97,12 @@ def nextObservation(child, interactions, prevAction, stage):
 				secLastScreen = secLastWiz
 
 		#if the child was not able to finish the sub-problem, but attempted a wrong answer
-		screenIntProbs = np.array(info['probWrongAnswer']) + interactions[0] * 0.0005  #prob depends on how long he/she hasn't interacted with screen
+		screenIntProbs = np.array(info['probWrongAnswer']) + interactions[0]*0.0005 #prob depends on how long he/she hasn't interacted with screen
 
 		#if the child used the screen in the last 30 secs
-		if np.random.binomial(1, screenIntProbs[child.type]) == 1:
+		if np.random.binomial(1, screenIntProbs[child.type]) == 1 and child.neededHints > 0:
 			secLastScreen = min(secLastWiz, np.random.randint(0, 30))
+			child.nWrongAnswersCurrent += 1
 			child.nWrongAnswers += 1
 
 	#if the child did not interact with the screen
@@ -121,7 +124,6 @@ def nextObservation(child, interactions, prevAction, stage):
 
 	#collect in the right format
 	# nextObs = np.array([child.preScore, child.grade, child.age, secLastScreen, secLastCor] + words + [stage, secLastWiz, child.anxiety], dtype = np.float)
-	nextObs = np.array([child.preScore, child.grade] + words + [stage, child.anxiety, child.nWrongAnswers], dtype=np.float)
+	nextObs = np.array([child.preScore, child.grade] + words + [stage, child.anxiety, child.nWrongAnswersCurrent], dtype=np.float)
 
 	return nextObs, interactions, stage
-
